@@ -30,6 +30,7 @@ public class Position extends Message {
     public static final String KEY_SATELLITES_VISIBLE = "satVisible";
     public static final String KEY_RSSI = "rssi";
     public static final String KEY_GPS = "gps";
+    public static final String KEY_ROAMING = "roaming";
     public static final String KEY_EVENT = "event";
     public static final String KEY_ALARM = "alarm";
     public static final String KEY_STATUS = "status";
@@ -37,6 +38,7 @@ public class Position extends Message {
     public static final String KEY_ODOMETER_SERVICE = "serviceOdometer"; // meters
     public static final String KEY_ODOMETER_TRIP = "tripOdometer"; // meters
     public static final String KEY_HOURS = "hours";
+    public static final String KEY_STEPS = "steps";
     public static final String KEY_INPUT = "input";
     public static final String KEY_OUTPUT = "output";
     public static final String KEY_IMAGE = "image";
@@ -113,7 +115,7 @@ public class Position extends Message {
     public static final String ALARM_ACCIDENT = "accident";
     public static final String ALARM_TOW = "tow";
     public static final String ALARM_ACCELERATION = "hardAcceleration";
-    public static final String ALARM_BREAKING = "hardBreaking";
+    public static final String ALARM_BRAKING = "hardBraking";
     public static final String ALARM_CORNERING = "hardCornering";
     public static final String ALARM_FATIGUE_DRIVING = "fatigueDriving";
     public static final String ALARM_POWER_CUT = "powerCut";

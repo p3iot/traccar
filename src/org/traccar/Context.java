@@ -25,8 +25,8 @@ import java.util.Properties;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.eclipse.jetty.util.URIUtil;
-import org.traccar.database.AliasesManager;
 import org.traccar.database.CalendarManager;
+import org.traccar.database.CommandsManager;
 import org.traccar.database.AttributesManager;
 import org.traccar.database.BaseObjectManager;
 import org.traccar.database.ConnectionManager;
@@ -57,10 +57,12 @@ import org.traccar.helper.Log;
 import org.traccar.model.Attribute;
 import org.traccar.model.BaseModel;
 import org.traccar.model.Calendar;
+import org.traccar.model.Command;
 import org.traccar.model.Device;
 import org.traccar.model.Driver;
 import org.traccar.model.Geofence;
 import org.traccar.model.Group;
+import org.traccar.model.Notification;
 import org.traccar.model.User;
 import org.traccar.geolocation.GoogleGeolocationProvider;
 import org.traccar.geolocation.GeolocationProvider;
@@ -202,12 +204,6 @@ public final class Context {
         return eventForwarder;
     }
 
-    private static AliasesManager aliasesManager;
-
-    public static AliasesManager getAliasesManager() {
-        return aliasesManager;
-    }
-
     private static AttributesManager attributesManager;
 
     public static AttributesManager getAttributesManager() {
@@ -218,6 +214,12 @@ public final class Context {
 
     public static DriversManager getDriversManager() {
         return driversManager;
+    }
+
+    private static CommandsManager commandsManager;
+
+    public static CommandsManager getCommandsManager() {
+        return commandsManager;
     }
 
     private static StatisticsManager statisticsManager;
@@ -256,7 +258,9 @@ public final class Context {
                 config.getLong("report.trip.minimalTripDuration", 300) * 1000,
                 config.getLong("report.trip.minimalParkingDuration", 300) * 1000,
                 config.getLong("report.trip.minimalNoDataDuration", 3600) * 1000,
-                config.getBoolean("report.trip.useIgnition"));
+                config.getBoolean("report.trip.useIgnition"),
+                config.getBoolean("event.motion.processInvalidPositions"),
+                config.getDouble("event.motion.speedThreshold", 0.01));
     }
 
     public static void init(String[] arguments) throws Exception {
@@ -395,11 +399,11 @@ public final class Context {
             eventForwarder = new EventForwarder();
         }
 
-        aliasesManager = new AliasesManager(dataManager);
-
         attributesManager = new AttributesManager(dataManager);
 
         driversManager = new DriversManager(dataManager);
+
+        commandsManager = new CommandsManager(dataManager);
 
         statisticsManager = new StatisticsManager();
 
@@ -430,6 +434,10 @@ public final class Context {
             return (BaseObjectManager<T>) geofenceManager;
         } else if (clazz.equals(Driver.class)) {
             return (BaseObjectManager<T>) driversManager;
+        } else if (clazz.equals(Command.class)) {
+            return (BaseObjectManager<T>) commandsManager;
+        } else if (clazz.equals(Notification.class)) {
+            return (BaseObjectManager<T>) notificationManager;
         }
         return null;
     }

@@ -42,16 +42,17 @@ import liquibase.resource.ResourceAccessor;
 import org.traccar.Config;
 import org.traccar.helper.Log;
 import org.traccar.model.Attribute;
-import org.traccar.model.AttributeAlias;
 import org.traccar.model.Device;
 import org.traccar.model.Driver;
 import org.traccar.model.Event;
 import org.traccar.model.Geofence;
 import org.traccar.model.Group;
 import org.traccar.model.ManagedUser;
+import org.traccar.model.Notification;
 import org.traccar.model.Permission;
 import org.traccar.model.BaseModel;
 import org.traccar.model.Calendar;
+import org.traccar.model.Command;
 import org.traccar.model.Position;
 import org.traccar.model.Server;
 import org.traccar.model.Statistics;
@@ -366,29 +367,6 @@ public class DataManager {
                 .executeQuery(Event.class);
     }
 
-    public Collection<AttributeAlias> getAttributeAliases() throws SQLException {
-        return QueryBuilder.create(dataSource, getQuery("database.selectAttributeAliases"))
-                .executeQuery(AttributeAlias.class);
-    }
-
-    public void addAttributeAlias(AttributeAlias attributeAlias) throws SQLException {
-        attributeAlias.setId(QueryBuilder.create(dataSource, getQuery("database.insertAttributeAlias"), true)
-                .setObject(attributeAlias)
-                .executeUpdate());
-    }
-
-    public void updateAttributeAlias(AttributeAlias attributeAlias) throws SQLException {
-        QueryBuilder.create(dataSource, getQuery("database.updateAttributeAlias"))
-                .setObject(attributeAlias)
-                .executeUpdate();
-    }
-
-    public void removeAttributeAlias(long attributeAliasId) throws SQLException {
-        QueryBuilder.create(dataSource, getQuery("database.deleteAttributeAlias"))
-                .setLong("id", attributeAliasId)
-                .executeUpdate();
-    }
-
     public Collection<Statistics> getStatistics(Date from, Date to) throws SQLException {
         return QueryBuilder.create(dataSource, getQuery("database.selectStatistics"))
                 .setDate("from", from)
@@ -414,6 +392,10 @@ public class DataManager {
                 return Attribute.class;
             case "calendar":
                 return Calendar.class;
+            case "command":
+                return Command.class;
+            case "notification":
+                return Notification.class;
             default:
                 throw new ClassNotFoundException();
         }

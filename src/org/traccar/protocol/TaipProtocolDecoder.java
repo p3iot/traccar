@@ -68,7 +68,6 @@ public class TaipProtocolDecoder extends BaseProtocolDecoder {
             .number("(x{8})")                    // odometer
             .number("[01]")                      // gps power
             .groupEnd("?")
-            .number("(d)")                       // fix mode
             .any()
             .compile();
 
@@ -124,7 +123,7 @@ public class TaipProtocolDecoder extends BaseProtocolDecoder {
                     position.set(Position.KEY_ALARM, Position.ALARM_ACCELERATION);
                     break;
                 case 23:
-                    position.set(Position.KEY_ALARM, Position.ALARM_BREAKING);
+                    position.set(Position.KEY_ALARM, Position.ALARM_BRAKING);
                     break;
                 case 24:
                     position.set(Position.KEY_ALARM, Position.ALARM_ACCIDENT);
@@ -162,7 +161,7 @@ public class TaipProtocolDecoder extends BaseProtocolDecoder {
             position.set(Position.KEY_ODOMETER, parser.nextLong(16, 0));
         }
 
-        position.setValid(parser.nextInt(0) != 0);
+        position.setValid(true);
 
         String[] attributes = null;
         beginIndex = sentence.indexOf(';');

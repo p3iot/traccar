@@ -65,7 +65,7 @@ public class Gl200TextProtocolDecoder extends BaseProtocolDecoder {
             .expression("(?:[0-9A-Z]{17},)?")    // vin
             .expression("(?:[^,]+)?,")           // device name
             .number("(xx),")                     // state
-            .expression("(?:[0-9F]{20})?,")      // iccid
+            .expression("(?:[0-9Ff]{20})?,")     // iccid
             .number("(d{1,2}),")                 // rssi
             .number("d{1,2},")
             .expression("[01],")                 // external power
@@ -80,7 +80,7 @@ public class Gl200TextProtocolDecoder extends BaseProtocolDecoder {
             .number("d{14},")                    // last fix time
             .groupBegin()
             .number("(d+),")                     // battery percentage
-            .expression("[01]?,")                // flash type
+            .number("[d.]*,")                    // flash type / power
             .number("(-?[d.]+)?,,,")             // temperature
             .or()
             .expression("(?:[01])?,").optional() // pin15 mode
@@ -394,7 +394,34 @@ public class Gl200TextProtocolDecoder extends BaseProtocolDecoder {
             return null;
         }
 
-        position.set(Position.KEY_STATUS, parser.next());
+        switch (parser.nextHexInt()) {
+            case 0x16:
+            case 0x1A:
+            case 0x12:
+                position.set(Position.KEY_IGNITION, false);
+                position.set(Position.KEY_MOTION, true);
+                break;
+            case 0x11:
+                position.set(Position.KEY_IGNITION, false);
+                position.set(Position.KEY_MOTION, false);
+                break;
+            case 0x21:
+                position.set(Position.KEY_IGNITION, true);
+                position.set(Position.KEY_MOTION, false);
+                break;
+            case 0x22:
+                position.set(Position.KEY_IGNITION, true);
+                position.set(Position.KEY_MOTION, true);
+                break;
+            case 0x41:
+                position.set(Position.KEY_MOTION, false);
+                break;
+            case 0x42:
+                position.set(Position.KEY_MOTION, true);
+                break;
+            default:
+                break;
+        }
 
         position.set(Position.KEY_RSSI, parser.nextInt());
 
